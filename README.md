@@ -1,6 +1,6 @@
 Sistema de Análisis de Ventas con Big Data
 
-Descripción
+Descripción:
 Este proyecto implementa un sistema de análisis de ventas en comercio electrónico utilizando tecnologías Big Data como Apache Kafka y Apache Spark.
 
 El sistema permite:
@@ -22,6 +22,14 @@ Arquitectura
 
 Ejecución
 
-### 1. Iniciar Kafka
+1. Iniciar Kafka
+   docker-compose up -d
+2. Ejecutar productor
+   python producer/simulador_ventas.py
+3. Ejecutar Spark Streaming
+   spark-submit consumer/spark_streaming.py
+
+Autor: Roberto Carlos Hernandez Lagos
+
 ```bash
 docker-compose up -d
