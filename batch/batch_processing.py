@@ -1,13 +1,29 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import sum, col
+from pyspark.sql.functions import col, sum, desc
 
-spark = SparkSession.builder.appName("BatchVentas").getOrCreate()
+# Crear sesión Spark
+spark = SparkSession.builder.appName("AnalisisEcommerce").getOrCreate()
 
-df = spark.read.json("data/ventas.json")
+# Cargar dataset
+df = spark.read.csv("online_retail.csv", header=True, inferSchema=True)
 
-df = df.withColumn("total", col("precio") * col("cantidad"))
+# Ver datos
+df.show(5)
 
-resultado = df.groupBy("producto") \
-    .agg(sum("total").alias("ingresos_totales"))
+# Limpiar datos (eliminar nulos)
+df = df.dropna()
 
-resultado.show()
+# Crear columna total de venta
+df = df.withColumn("TotalPrice", col("Quantity") * col("UnitPrice"))
+
+# 🔹 1. Ventas por país
+ventas_pais = df.groupBy("Country").sum("TotalPrice").orderBy(desc("sum(TotalPrice)"))
+ventas_pais.show()
+
+# 🔹 2. Productos más vendidos
+productos = df.groupBy("Description").sum("Quantity").orderBy(desc("sum(Quantity)"))
+productos.show(10)
+
+# 🔹 3. Clientes que más compran
+clientes = df.groupBy("CustomerID").sum("TotalPrice").orderBy(desc("sum(TotalPrice)"))
+clientes.show(10)
